@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiniConnect</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eaf0f6;
+            margin: 0;
+            text-align: center;
+        }
+
+        header {
+            background: #1877f2;
+            color: white;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 15px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+
+        textarea {
+            width: 95%;
+            height: 70px;
+            padding: 8px;
+        }
+
+        button {
+            background: #1877f2;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            margin: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>MiniConnect</h1>
+    <p>Share your thoughts with everyone!</p>
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <h2>Create a Post</h2>
+
+        <input
+            type="text"
+            id="username"
+            placeholder="Enter your username"
+        >
+
+        <br><br>
+
+        <textarea
+            id="postContent"
+            placeholder="What's on your mind?"
+        ></textarea>
+
+        <br>
+
+        <button onclick="createPost()">Publish Post</button>
+    </div>
+
+    <h2>Recent Posts</h2>
+
+    <div id="posts"></div>
+
+</div>
+
+<script>
+    let posts = [];
+
+    function createPost() {
+        let username =
+            document.getElementById("username").value.trim();
+
+        let content =
+            document.getElementById("postContent").value.trim();
+
+        if (!username || !content) {
+            alert("Enter your username and post!");
+            return;
+        }
+
+        posts.unshift({
+            username: username,
+            content: content,
+            likes: 0,
+            comments: []
+        });
+
+        document.getElementById("postContent").value = "";
+
+        displayPosts();
+    }
+
+    function likePost(index) {
+        posts[index].likes++;
+        displayPosts();
+    }
+
+    function addComment(index) {
+        let input = document.getElementById("comment" + index);
+        let comment = input.value.trim();
+
+        if (comment === "") {
+            alert("Enter a comment!");
+            return;
+        }
+
+        posts[index].comments.push(comment);
+        displayPosts();
+    }
+
+    function displayPosts() {
+        let container = document.getElementById("posts");
+
+        container.innerHTML = "";
+
+        posts.forEach((post, index) => {
+            let card = document.createElement("div");
+            card.className = "card";
+
+            let heading = document.createElement("h3");
+            heading.textContent = post.username;
+
+            let content = document.createElement("p");
+            content.textContent = post.content;
+
+            let likes = document.createElement("p");
+            likes.textContent = "Likes: " + post.likes;
+
+            let likeButton = document.createElement("button");
+            likeButton.textContent = "Like";
+            likeButton.onclick = () => likePost(index);
+
+            let commentInput = document.createElement("input");
+            commentInput.id = "comment" + index;
+            commentInput.placeholder = "Write a comment";
+
+            let commentButton = document.createElement("button");
+            commentButton.textContent = "Comment";
+            commentButton.onclick = () => addComment(index);
+
+            card.append(
+                heading,
+                content,
+                likes,
+                likeButton,
+                commentInput,
+                commentButton
+            );
+
+            post.comments.forEach(comment => {
+                let commentElement = document.createElement("p");
+                commentElement.textContent = "💬 " + comment;
+                card.appendChild(commentElement);
+            });
+
+            container.appendChild(card);
+        });
+    }
+</script>
+
+</body>
+</html>
